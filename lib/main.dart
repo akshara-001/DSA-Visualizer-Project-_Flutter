@@ -1,5 +1,5 @@
-import 'package:first_new/EmojiCard.dart';
-import 'package:first_new/card.dart';
+
+
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
@@ -43,10 +43,51 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+   TextEditingController heightcontroller = TextEditingController();
+   TextEditingController weightcontroller = TextEditingController();
+  bool male = false;
+  bool female = false;
+  String category = "";
+  String bmi = "";
+  String imagePath = "";
 
-  int i = 0;
-  List<String> q = ["Bonus 🔥: Push yourself, because no one else is going to do it for you.","Bonus 🔥: The pain you feel today will be the strength you feel tomorrow."," Bonus 🔥: Don’t watch the clock; do what it does. Keep going"];
+void calculateBMI(){
+  double weight = double.tryParse(weightcontroller.text)??0;
+  double height = double.tryParse(heightcontroller.text)??0;
+  if(weight <=0 || height<=0 || (!female && !male)){
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please enter valid height, weight, and select gender")
+        )
+    );
+    return;
+  }
+  height = height/100;
+   double tbmi =  weight / (height * height);
+  String gender = male ? 'male' : 'female';
+  setState(() {
+    bmi = tbmi.toStringAsFixed(1);
+    if (tbmi < 18.5) {
+      category = 'Underweight';
+      imagePath = 'assets/images/underweight_$gender.jpg';
+    } else if (tbmi < 24.9) {
+      category = 'Normal';
+      imagePath = 'assets/images/normal_$gender.jpg';
+    } else if (tbmi < 29.9) {
+      category = 'Overweight';
+      imagePath = 'assets/images/overweight_$gender.jpg';
+    } else {
+      category = 'Obese';
+      imagePath = 'assets/images/obese_$gender.jpg';
+    }
 
+  });
+
+}
+   void dispose() {
+     heightcontroller.dispose();
+     weightcontroller.dispose();
+     super.dispose();
+   }
   @override
   Widget build(BuildContext context) {
 
@@ -56,146 +97,148 @@ class _MyHomePageState extends State<MyHomePage> {
       backgroundColor: Colors.black,
       appBar: AppBar(
 
-        backgroundColor: Colors.pinkAccent,
+        backgroundColor: Colors.indigoAccent,
 
-        title: Text('LetsGO!',style: TextStyle(color: Colors.white)),
+        title: Text('Your BMI Calculator',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 30)),
       ),
       body:
-
+      Column(
+        children: [
           Column(
-           children: [
-             Stack(
-               children: [
-                 Container(
-         
-                   height: 150,
-                   child: Image.network("http://clipart-library.com/img/742112.png"),
-                 ),
-                 CircleAvatar(
-                   radius: 60,
-                   backgroundImage: AssetImage("assets/images/img.png"),),
-                 Positioned(
-                   left: 95,
-                     top: 80,
-                     child: CircleAvatar( backgroundColor: Colors.green,radius: 10,)),
-         
-         
-         
-               ],
-         
-             ),
-             Container(
-               width: double.infinity,
-               child: Row(
-                 children: [
-                   Expanded(
-                     child: Card(
-                       color: Colors.white70,
-                       elevation: 2,
-                       child: Row(
-                         children: [
-                           Icon(Icons.task,size: 30,color: Colors.brown),
-                           Text("Tasks : 5",style: TextStyle(color: Colors.black),)
-                         ],
-                       ),
-                     ),
-                   ),
-                    Expanded(
-                      child: Card(
-                        elevation: 2,
-                        color: Colors.white70,
-                        child: Row(
-                          children: [
-                           Text("⏰",style: TextStyle(fontSize: 24)),
-                            SizedBox(width:8),
-                            Text("Focus: 6 hrs",style: TextStyle(color: Colors.black))
-                          ],
-                        ),
-                      ),
+            children: [
+              Text("Gender : ",style: TextStyle(color: Colors.white70,fontWeight: FontWeight.bold,fontSize: 40,),),
+              Row(
+                children: [
+                  SizedBox(width: 5,),
+                  ElevatedButton(onPressed: (){
+                    setState(() {
+                      male = true;
+                      female = false;
+                    });
+
+
+                  },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: male ? Colors.cyan.withOpacity(0.3) : Colors.blueGrey.withOpacity(0.3),
                     ),
-                   Expanded(
-                     child: Card(
-                       elevation: 2,
-                       color: Colors.white70,
-                       child: Row(
-                         children: [
-                          FaIcon(FontAwesomeIcons.boltLightning,size: 30,color: Colors.yellow.shade700,),
-                          SizedBox(width:8),
-                           Text("Energy : High",style: TextStyle(color: Colors.black))
-                         ],
-                       ),
-                     ),
-                   )
-                 ],
-               ),
-             ),
-             Text("Today's Tasks",style: TextStyle(fontSize: 35,fontWeight: FontWeight.bold,fontStyle: FontStyle.italic,color: Colors.blueGrey),),
-              Stack(
-            children:[ Container(
-                   width: double.infinity,
-                   height: 400,
-                   child: SingleChildScrollView(
-                     child: GridView.count(
-                         shrinkWrap: true,
-                         physics: NeverScrollableScrollPhysics(),
-                         crossAxisCount: 2,
-                         children:[ Card1(title: "Workout",des: "From 5 pm to 6 pm , Two workout routines of emi wong ",icon: FaIcon(FontAwesomeIcons.dumbbell,color: Colors.black,),),
-                     Card1(title: "Study",des: "From 8 pm to 10 pm , Revising Coding DSA ",icon2: "📖",),
-                               Card1(title:"Walk",des: "10K steps goal ",icon2: "🚶‍♀️",),
-                           Card1(title: "Cooking",des:"Learning cooking from mom ",icon2: "🥘"),
-                           Card1(title: "Cleaning",des:"Dusting of house",icon2:"🧹")
-                         ]
-                         ),
-                   ),
-                 ),
-             Positioned(
-               left: 300,
-               top:  300,
+                    child: Text('♂ Male',style: TextStyle(fontSize: 30)),),
+                  SizedBox(width: 15,),
+                  ElevatedButton(onPressed: (){
+                    setState(() {
+                      male = false;
+                      female = true;
+                    });
+                    },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: female ? Colors.cyan.withOpacity(0.3) : Colors.blueGrey.withOpacity(0.3),
+                      ),
+                      child: Text('♀ Female',style: TextStyle(fontSize: 30)))
+                ],
+              )
+            ],
+          ),
+          SizedBox(height: 10,),
+          InkWell(
+            onTap: (){
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("For Your Reference 💡: BMI < 18.5 → Underweight,18.5 ≤ BMI < 25 → Normal,25 ≤ BMI < 30 → Overweight,30 ≤ BMI < 35 → Obese Class ")
+              ));
+            },
+              child: Image.network("https://cdn-icons-png.flaticon.com/512/7565/7565048.png",height: 55,)),
+          SizedBox(height: 30,),
+          Center(
+            child: Container(
 
-               child: Container(
-                   width:75,
-                   height: 80,
-                   child: InkWell(
-                     onTap: (){
+              width: 300,
+              height: 500,
+              child: Column(
+                children: [
+                  TextField(
+                    controller: heightcontroller,
+                    keyboardType: TextInputType.numberWithOptions(decimal: true),
+
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide: BorderSide(
+                        color: Colors.white70
+                      )
+                    ),
+                        hintText: 'Height',
+                    suffixText: 'CM',
+                    prefixText: '📏'
+                  ),
+
+                  ),
+                  TextField(
+                    controller: weightcontroller,
+                    keyboardType: TextInputType.numberWithOptions(decimal: true),
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide: BorderSide(
+                                color: Colors.white70
+                            )
+                        ),
+                      hintText: 'Weight ',
+                      suffixText: 'KG',
+                      prefixText: '⚖️'
+
+                    ),
+                  ),
+                  SizedBox(height:25 ,),
+                  ElevatedButton(onPressed:
+                      calculateBMI,
+
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orangeAccent
+                      ),
+                      child: Text("Calculate BMI",style: TextStyle(color: Colors.black),)),
+                     TextButton(onPressed: (){
                        setState(() {
+                         heightcontroller.clear();
+                         weightcontroller.clear();
+                         male = false;
+                         female = false;
+                         bmi = '';
+                         imagePath = '';
+                         category = '';
+                       });
 
-                         ScaffoldMessenger.of(context).showSnackBar(
 
-                             SnackBar(content: Text(q[i]),
-                               duration: Duration(seconds: 4),
-
-                             )
-
-                         );
-
-                         i++;
-                         if(i == q.length ) i = 0;
-                       }
+                       ScaffoldMessenger.of(context).showSnackBar(
+                         SnackBar(content: Text("Reset Successful",style: TextStyle(color:Colors.black),),
+                         backgroundColor: Colors.cyanAccent,)
                        );
 
-                     },
-                       child: Image.network("https://clipartcraft.com/images/fire-clipart-emoji-2.png"))),
-             ),
-              Positioned(
-                top: 375,
-                left: 250,
-                  child: Text("Need Motivation",style: TextStyle(fontStyle: FontStyle.italic,fontWeight: FontWeight.bold,fontFamily: 'totaro',fontSize: 20)))
-    ]
+                     }, child: Text("Reset")),
+                  if(bmi.isNotEmpty)
+                    Column(
+                      children: [
+                        Card(
+                          elevation: 3,
+                            color:Colors.blue.withOpacity(0.3),
+                            child: Text("Your BMI : $bmi",style: TextStyle(fontSize: 28,fontWeight: FontWeight.bold),)),
+                        SizedBox(height: 5,),
+                        Card(
+                            color:Colors.blue.withOpacity(0.3),
+                            elevation: 3,
+                            child: Text("Category: $category",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold))),
+                        SizedBox(height: 10,),
+                        Image.asset(imagePath,height: 150,)
+                      ],
+                    )
+
+
+
+                ],
               ),
-             
-
-             IconButton(onPressed: (){
-               ScaffoldMessenger.of(context).showSnackBar(
-                 SnackBar(content: Text("Adding new task feature coming soon⏳"))
-               );
+            ),
+          ),
+        ],
+      )
 
 
-
-             }, icon: Icon(Icons.add_circle,size: 30))
-         
-         
-           ],
-         ),
 
 
     );
