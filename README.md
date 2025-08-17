@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 💪 Flutter Motivation Dashboard
 
 A sleek and inspiring productivity dashboard built using Flutter.  
@@ -38,3 +39,6 @@ git clone https://github.com/yourusername/flutter_motivation_ui.git
 cd flutter_motivation_ui
 flutter pub get
 flutter run
+=======
+# BMI-Calculator_App-Flutter-
+>>>>>>> 6cd023a2668a95a027e7f39795931a6338a63962
